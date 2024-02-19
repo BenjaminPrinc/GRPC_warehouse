@@ -24,7 +24,7 @@ GRPC needs the packages **grpcio** and **grpcio-tools**, which can be installed 
 ### 2. Defining the .proto file
 You can say, that the proto file defines the grpc service. For example, which datatypes are used. After the proto file is finished, a command generate the stubs, which are essential for the client and server.
 
-`python -m <FileName>.protoc --proto_path=. ./unary.proto --python_out=. --grpc_python_out=.`
+`python -m grpc_tools.protoc --proto_path=. ./<FileName>.proto --python_out=. --grpc_python_out=.`
 
 
 ### 3. Client and Server

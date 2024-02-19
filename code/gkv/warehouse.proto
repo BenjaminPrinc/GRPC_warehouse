@@ -1,0 +1,32 @@
+syntax = 'proto3';
+
+option java_package = "io.grpc.warehouse";
+package warehouse;
+
+service Warehouse{
+  //https://www.velotio.com/engineering-blog/grpc-implementation-using-python
+  rpc GetServerResponse(WarehouseData) returns (MessageResponse) {}
+}
+
+message ProductData {
+  string productID = 1;
+  string productName = 2;
+  string productCategory = 3;
+  int32 productQuantity = 4;
+  string productUnit = 5;
+}
+
+message WarehouseData {
+  string warehouseID = 1;
+  string warehouseName = 2;
+  string timestamp = 3;
+  string warehouseAddress = 4;
+  int32 warehousePostalCode = 5;
+  string warehouseCity = 6;
+  string warehouseCountry = 7;
+  repeated ProductData productData = 8;  // Use 'repeated' for arrays/lists.
+}
+
+message MessageResponse{
+  string responseData = 1;
+}
