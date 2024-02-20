@@ -2,10 +2,11 @@
 
 **Author**: Benjamin Princ
 
-**Date**: 13.02.2024
+**Date**: 20.02.2024
 
 - [GRPC Warehouse](#grpc-warehouse)
   - [Introduction](#introduction)
+  - [Theory questions](#theory-questions)
   - [Work (GKue)](#work-gkue)
     - [1. Installing python packages](#1-installing-python-packages)
     - [2. Defining the .proto file](#2-defining-the-proto-file)
@@ -21,6 +22,26 @@
 
 ## Introduction
 A grpc demo should be implemented, which shows the communication between a server and client.
+
+## Theory questions 
+
+*What is gRPC and why does it work accross languages and platforms?*
+* A RPC(Remote Procedure Call) Framework, makes it possible to call methods on an other device. gRPC uses Protocol Buffers for serialization and HTTP2 for transportation.
+
+*Describe the RPC life cycle starting with the RPC client?*
+* The client sends a Proto Request to the gRPC server, which then answers with a Proto Response. The Request and Response methods are declared in the .proto file, which is essential.
+
+*Describe the workflow of Protocol Buffers?*
+* Protocol Buffers are language- and platform-neutral, and are used for serzializing structured data. From the .proto file language-specific code can be generated.
+
+*What are the benefits of using protocol buffers?*
+* Protocol buffers are high performant and enable a seamless integration between different services.
+
+*When is the use of protocol not recommended?*
+* When you use a non-object-oriented language
+
+*List 3 different data types that can be used with protocol buffers*
+* Primitive data types (boolean, integers, floats), message (used for nested or repeating parts), enums (A set of values to choose from)
 
 ## Work (GKue)
 
@@ -56,7 +77,7 @@ Google´s protobuf plugin is able to automatically generate the needed classes f
 
 #### 2.1 Problem with generated classes
 At first i got a syntax error when i tried to access the generated classes. 
-With the help of the stackoverflow thread (Source [3]), i found out, that you need to declare the generated path as source for the IDE:
+With the help of the stackoverflow thread (Source [4]), i found out, that you need to declare the generated path as source for the IDE:
 ```gradle
 sourceSets {
     main {
@@ -113,10 +134,14 @@ if __name__ == '__main__':
 ```
 
 ## Sources
-[1], *GRPC python*, https://www.velotio.com/engineering-blog/grpc-implementation-using-python
+[1], *GRPC Introduction*, https://grpc.io/docs/what-is-grpc/introduction/
 
-[2], *Java proto*, https://medium.com/@DivyaJaisawal/generate-java-code-from-proto-file-using-gradle-1fb9fe64e046
+[2], *GRPC python*, https://www.velotio.com/engineering-blog/grpc-implementation-using-python
 
-[3], *Import generated fiels*, https://stackoverflow.com/questions/44088009/import-protobuf-generated-classes-using-gradle-in-intellij
+[3], *Java proto*, https://medium.com/@DivyaJaisawal/generate-java-code-from-proto-file-using-gradle-1fb9fe64e046
+
+[4], *Import generated fiels*, https://stackoverflow.com/questions/44088009/import-protobuf-generated-classes-using-gradle-in-intellij
+
+[5], *Protocol Buffer*, https://protobuf.dev/overview/
 
 
