@@ -13,7 +13,7 @@ def run():
     response = stub.GetServerResponse(request)
 
     # printing the response
-    print("Client received: " + response.responseData)
+    print("Client received: " + "\n" + response.responseData)
 
 
 if __name__ == '__main__':
