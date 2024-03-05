@@ -17,6 +17,10 @@
       - [2.1 Problem with generated classes](#21-problem-with-generated-classes)
     - [3. Implementing the method to answer the grpc request](#3-implementing-the-method-to-answer-the-grpc-request)
     - [4. Implementing the python client](#4-implementing-the-python-client)
+  - [Work (EKv)](#work-ekv)
+    - [Changing the proto file](#changing-the-proto-file)
+    - [Adding the code to the server](#adding-the-code-to-the-server)
+    - [Adding the code to the client](#adding-the-code-to-the-client)
   - [Sources](#sources)
 
 
@@ -133,6 +137,93 @@ if __name__ == '__main__':
     run()
 ```
 
+## Work (EKv)
+A health ping system should be implemented.
+
+### Changing the proto file
+```proto
+syntax = 'proto3';
+
+option java_package = "io.grpc.warehouse";
+package warehouse;
+
+service Warehouse{
+  //https://www.velotio.com/engineering-blog/grpc-implementation-using-python
+  rpc GetServerResponse(WarehouseData) returns (MessageResponse) {}
+
+  rpc HealthCheck(PingRequest) returns (PingResponse) {}
+}
+
+message ProductData {
+  string productID = 1;
+  string productName = 2;
+  string productCategory = 3;
+  int32 productQuantity = 4;
+  string productUnit = 5;
+}
+
+message WarehouseData {
+  string warehouseID = 1;
+  string warehouseName = 2;
+  string timestamp = 3;
+  string warehouseAddress = 4;
+  int32 warehousePostalCode = 5;
+  string warehouseCity = 6;
+  string warehouseCountry = 7;
+  repeated ProductData productData = 8;  // Use 'repeated' for arrays/lists.
+}
+
+message MessageResponse{
+  string responseData = 1;
+}
+
+message PingRequest {
+  string clientID = 1;
+}
+
+message PingResponse {
+  string clientID = 1;
+  string timestamp = 2;
+  string status = 3;
+}
+```
+The new proto file has a PingRequest and PingResponse which is for the health check system.
+
+### Adding the code to the server
+The server has a healtCheck response method and a Scheduler, which looks every 5 seconds, if the client send a ping again.
+Otherwise it logs an error
+
+```java
+private static final Logger logger = Logger.getLogger("HealthCheck");
+private final ConcurrentHashMap<String, Long> lastHealthCheck = new ConcurrentHashMap<>();
+private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+public WarehouseImpl() {
+        scheduler.scheduleAtFixedRate(() -> {
+            long now = System.currentTimeMillis();
+            lastHealthCheck.forEach((clientID, lastCheckTime) -> {
+                if (now - lastCheckTime > 5000) {
+                    logger.warning("Client " + clientID + " has no response.");
+                }
+            }
+        }
+}
+
+
+WarehouseOuterClass.PingResponse response = WarehouseOuterClass.PingResponse.newBuilder()
+                .setClientID(request.getClientID())
+                .setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()))
+                .setStatus("healthy")
+                .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+        lastHealthCheck.put(request.getClientID(), System.currentTimeMillis());
+```
+
+### Adding the code to the client
+The client has a while-true loop, which sends a ping to the server every 5 seconds. It receives a "healthy"-response and the timestamp from the server.
+
 ## Sources
 [1], *GRPC Introduction*, https://grpc.io/docs/what-is-grpc/introduction/
 
@@ -144,4 +235,4 @@ if __name__ == '__main__':
 
 [5], *Protocol Buffer*, https://protobuf.dev/overview/
 
-
+[6], *concurrent Hashmap*, https://www.baeldung.com/java-concurrent-map 
